@@ -101,7 +101,9 @@ export const AppLayoutOutlet = () => {
               </div>
             ) : (
               <>
-                <img src={logoPath} alt="Logo" />
+                <NavLink to="/">
+                  <img src={logoPath} alt="Logo" />
+                </NavLink>
                 <div className={styles.pageContainer__authBox}>
                   <Button responsive onClick={() => navigate("/signup")}>
                     Регистрация

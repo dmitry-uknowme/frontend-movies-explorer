@@ -34,7 +34,8 @@
   }
 
   &-disabled {
-    opacity: .5
+    opacity: .5;
+    cursor: default
   }
 
   &-color-default {

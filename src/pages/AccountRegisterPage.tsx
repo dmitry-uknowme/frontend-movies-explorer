@@ -45,13 +45,16 @@ export const AccountRegisterPage = () => {
       password: "",
       name: "",
     },
+    mode: "all",
   });
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = formMethods;
+
+  const isFormInvalid = !isValid || !isDirty;
 
   const handleFormSubmit = useCallback(
     async (formData: TRegisterFormValues) => {
@@ -62,7 +65,7 @@ export const AccountRegisterPage = () => {
         const userProfile = await myProfile();
         setCurrUserProfile(userProfile);
 
-        navigate("/profile");
+        navigate("/movies");
       } catch (e: any) {
         enqueueSnackbar(e.message, {
           variant: "error",
@@ -79,11 +82,13 @@ export const AccountRegisterPage = () => {
       onSubmit={handleSubmit(handleFormSubmit)}
       className={cn(styles.accountLoginPage, "page-section")}
     >
-      <img
-        src={logoPath}
-        alt="Logo"
-        className={styles.accountLoginPage__logo}
-      />
+      <NavLink to="/">
+        <img
+          src={logoPath}
+          alt="Logo"
+          className={styles.accountLoginPage__logo}
+        />
+      </NavLink>
       <h3 className="bold-500">Добро пожаловать!</h3>
       <Controller
         name="name"
@@ -174,7 +179,7 @@ export const AccountRegisterPage = () => {
       <Button
         wide
         color="blue"
-        disabled={signUpQuery.loading || signInQuery.loading}
+        disabled={signUpQuery.loading || signInQuery.loading || isFormInvalid}
         className={styles.accountLoginPage__submitBtn}
       >
         Зарегистрироваться

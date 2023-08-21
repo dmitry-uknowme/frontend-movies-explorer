@@ -113,7 +113,7 @@ export interface IMySavedMoviesResponse {
   image: string;
   trailerLink: string;
   thumbnail: string;
-  owner: string;
+  owner?: string;
   movieId: number;
   nameRU: string;
   nameEN: string;
@@ -145,7 +145,11 @@ export interface ISaveMovieProps {
   trailerLink: string;
 }
 
-export const saveMovie = (data: ISaveMovieProps) =>
+export interface ISaveMovieResponse extends ISaveMovieProps {
+  _id: string;
+}
+
+export const saveMovie = (data: ISaveMovieProps): Promise<ISaveMovieResponse> =>
   request({
     config: {
       method: "POST",

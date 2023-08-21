@@ -20,12 +20,7 @@ import {
 import { useSnackbar } from "notistack";
 import { Button } from "components/Button/Button";
 import { useAllMoviesPaginatorScreenSize } from "./helpers";
-import {
-  lgScreenParams,
-  mdScreenParams,
-  smScreenParams,
-  xlScreenParams,
-} from "./configs";
+import { SIZES } from "./configs";
 import { SHORT_MOVIE_LEN } from "./SavedMoviesPage";
 
 export const AllMoviesPage = () => {
@@ -55,7 +50,7 @@ export const AllMoviesPage = () => {
 
         if (savedMovie) {
           await removeMovie(savedMovie._id);
-          await fetchSavedMovies();
+          setSavedMovies(savedMovies.filter((x) => x.movieId !== id));
 
           enqueueSnackbar("Фильм успешно удален из личной картотеки", {
             variant: "success",
@@ -67,7 +62,7 @@ export const AllMoviesPage = () => {
         const movieById = fetchedMovies.find((x) => x.id === id);
 
         if (movieById) {
-          await saveMovie({
+          const insertedMovie = {
             movieId: movieById.id,
             description: movieById.description,
             image: buildUrl(movieById.image.url),
@@ -79,9 +74,17 @@ export const AllMoviesPage = () => {
             country: movieById.country,
             year: movieById.year,
             trailerLink: movieById.trailerLink,
-          });
+          };
 
-          await fetchSavedMovies();
+          const saveMovieQuery = await saveMovie(insertedMovie);
+
+          setSavedMovies((prev) => [
+            ...prev,
+            {
+              ...insertedMovie,
+              _id: saveMovieQuery._id,
+            },
+          ]);
 
           enqueueSnackbar("Фильм успешно добавлен в личную картотеку", {
             variant: "success",
@@ -167,9 +170,13 @@ export const AllMoviesPage = () => {
             savedMovies={savedMovies}
             handleOnLike={handleOnLike}
           />
-        ) : (
+        ) : !searchTxt ? (
           <div className={styles["savedMoviesPage__catalog-placeholder"]}>
             Начните вводить в поле поиска :)
+          </div>
+        ) : (
+          <div className={styles["savedMoviesPage__catalog-placeholder"]}>
+            Ничего не найдено :(
           </div>
         )}
       </div>
@@ -204,29 +211,7 @@ export const AllMoviesPaginator: React.FC<IAllMoviesPaginatorProps> = ({
   );
 
   const catalogItemsPaginable = useMemo(() => {
-    let initialCount = 0,
-      incrementByCount = 0;
-
-    if (currScreen === "xl") {
-      initialCount = xlScreenParams.initialCount;
-      incrementByCount = xlScreenParams.incrementByCount;
-    }
-
-    if (currScreen === "lg") {
-      initialCount = lgScreenParams.initialCount;
-      incrementByCount = lgScreenParams.incrementByCount;
-    }
-
-    if (currScreen === "md") {
-      initialCount = mdScreenParams.initialCount;
-      incrementByCount = mdScreenParams.incrementByCount;
-    }
-
-    if (currScreen === "sm") {
-      initialCount = smScreenParams.initialCount;
-      incrementByCount = smScreenParams.incrementByCount;
-    }
-
+    const [initialCount, incrementByCount] = SIZES[currScreen];
     return calcPaginationDiff(initialCount, incrementByCount, offsetPag);
   }, [catalogItems, offsetPag, currScreen]);
 

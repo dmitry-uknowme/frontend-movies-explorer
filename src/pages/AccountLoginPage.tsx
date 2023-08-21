@@ -35,13 +35,16 @@ export const AccountLoginPage = () => {
       email: "",
       password: "",
     },
+    mode: "all",
   });
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = formMethods;
+
+  const isFormInvalid = !isValid || !isDirty;
 
   const handleFormSubmit = useCallback(async (formData: TLoginFormValues) => {
     try {
@@ -50,7 +53,7 @@ export const AccountLoginPage = () => {
       const userProfile = await myProfile();
       setCurrUserProfile(userProfile);
 
-      navigate("/profile");
+      navigate("/movies");
     } catch (e: any) {
       enqueueSnackbar(e.message, {
         variant: "error",
@@ -65,11 +68,13 @@ export const AccountLoginPage = () => {
       onSubmit={handleSubmit(handleFormSubmit)}
       className={cn(styles.accountLoginPage, "page-section")}
     >
-      <img
-        src={logoPath}
-        alt="Logo"
-        className={styles.accountLoginPage__logo}
-      />
+      <NavLink to="/">
+        <img
+          src={logoPath}
+          alt="Logo"
+          className={styles.accountLoginPage__logo}
+        />
+      </NavLink>
       <h3 className="bold-500">Рады видеть!</h3>
       <Controller
         name="email"
@@ -133,7 +138,7 @@ export const AccountLoginPage = () => {
       <Button
         wide
         color="blue"
-        disabled={signInQuery.loading}
+        disabled={signInQuery.loading || isFormInvalid}
         className={styles.accountLoginPage__submitBtn}
       >
         Войти

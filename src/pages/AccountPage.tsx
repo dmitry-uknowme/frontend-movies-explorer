@@ -6,7 +6,6 @@ import cn from "classnames";
 import { CurrentUserCtx } from "App";
 
 const fieldsMap: Record<string, string> = {
-  _id: "ИД",
   email: "email",
   name: "Имя",
 };
@@ -20,16 +19,21 @@ export const AccountPage = () => {
         <>
           <h5>Привет, {profileData.name}!</h5>
           <div className={styles.accountPage__userSummary}>
-            {Object.entries(profileData).map(([label, value]) => (
-              <div className={styles.accountPage__userSummary__row} key={label}>
-                <div className={styles.accountPage__userSummary__label}>
-                  {capitalizeWord(fieldsMap[label])}
+            {Object.entries(profileData)
+              .filter(([label]) => fieldsMap[label])
+              .map(([label, value]) => (
+                <div
+                  className={styles.accountPage__userSummary__row}
+                  key={label}
+                >
+                  <div className={styles.accountPage__userSummary__label}>
+                    {capitalizeWord(fieldsMap[label])}
+                  </div>
+                  <div className={styles.accountPage__userSummary__value}>
+                    {value}
+                  </div>
                 </div>
-                <div className={styles.accountPage__userSummary__value}>
-                  {value}
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
           <div className={styles.accountPage__manage}>
             <NavLink to="/profile/edit">Редактировать</NavLink>

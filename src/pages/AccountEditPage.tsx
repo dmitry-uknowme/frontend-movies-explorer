@@ -34,14 +34,17 @@ export const AccountEditPage = () => {
       email: "",
       name: "",
     },
+    mode: "all",
   });
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
     reset,
   } = formMethods;
+
+  const isFormInvalid = !isValid || !isDirty;
 
   useEffect(() => {
     if (profileData) {
@@ -136,7 +139,7 @@ export const AccountEditPage = () => {
       <Button
         wide
         color="blue"
-        disabled={updateProfileQuery.loading}
+        disabled={updateProfileQuery.loading || isFormInvalid}
         className={styles.accountLoginPage__submitBtn}
       >
         Сохранить

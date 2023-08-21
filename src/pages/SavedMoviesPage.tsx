@@ -37,20 +37,23 @@ export const SavedMoviesPage = () => {
     }
   }, []);
 
-  const handleOnRemoveMovie = useCallback(async (id: string | number) => {
-    try {
-      await removeMovie(id);
-      await fetchSavedMovies();
+  const handleOnRemoveMovie = useCallback(
+    async (id: string | number) => {
+      try {
+        await removeMovie(id);
+        setFetchedMovies(fetchedMovies.filter((x) => x._id !== id));
 
-      enqueueSnackbar("Фильм успешно удален из личной картотеки", {
-        variant: "success",
-      });
-    } catch (e: any) {
-      enqueueSnackbar(e.message, {
-        variant: "error",
-      });
-    }
-  }, []);
+        enqueueSnackbar("Фильм успешно удален из личной картотеки", {
+          variant: "success",
+        });
+      } catch (e: any) {
+        enqueueSnackbar(e.message, {
+          variant: "error",
+        });
+      }
+    },
+    [fetchedMovies],
+  );
 
   useEffect(() => {
     fetchSavedMovies();
@@ -112,9 +115,13 @@ export const SavedMoviesPage = () => {
               ))}
             </div>
           </div>
-        ) : (
+        ) : !searchTxt ? (
           <div className={styles["savedMoviesPage__catalog-placeholder"]}>
             Начните вводить в поле поиска :)
+          </div>
+        ) : (
+          <div className={styles["savedMoviesPage__catalog-placeholder"]}>
+            Ничего не найдено :(
           </div>
         )}
       </div>

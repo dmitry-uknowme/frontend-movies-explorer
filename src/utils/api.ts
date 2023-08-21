@@ -16,10 +16,14 @@ export const request = ({ baseUrl, body, config }: IRequestProps) => {
     },
     credentials: "include",
     ...config,
-  }).then((res) => {
-    const result = res.json();
-    return res.ok ? result : result.then((e) => Promise.reject(e));
-  });
+  })
+    .then((res) => {
+      const result = res.json();
+      return res.ok ? result : result.then((e) => Promise.reject(e));
+    })
+    .catch((e) => {
+      throw new Error(e.message || "Непредвиденная ошибка на сервере");
+    });
 };
 
 export const getEnvVar = (key: string) => {

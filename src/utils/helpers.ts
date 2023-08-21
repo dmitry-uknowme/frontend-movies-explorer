@@ -1,7 +1,6 @@
 export const convertDur = (dur: number) => {
-  const hours = Math.floor(dur / 3600);
-  const minutes = Math.floor((dur - hours * 3600) / 60);
-
+  const hours = Math.floor(dur / 60);
+  const minutes = dur % 60;
   return hours + "ч " + minutes + "м ";
 };
 
